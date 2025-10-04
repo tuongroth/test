@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "extensionHost",
+      "request": "launch",
+      "name": "Launch Extension (Extension Development Host)",
+      "runtimeExecutable": "${execPath}",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+      "env": {
+        "OPENAI_API_KEY": ""
+      },
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    }
+  ]
+}
