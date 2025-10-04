@@ -1,3 +1,29 @@
+**Assignment 1 –  VSCode Extension Life Cycle & Auto-Suggestion Demo**
+
+## Key Points
+
+* Activation is triggered by user action → `activate()` runs
+* Auto-suggestions are provided via registered providers
+* This Hello/Goodbye example illustrates both life cycle and IntelliSense
+
+## Life Cycle
+
+* **Activation:** Extension activates when a user action or event occurs (e.g., running a command).  
+  **Demo:** Press `Ctrl+Shift+P → Hello World` → Popup appears  
+  ![Hello World Command Trigger](https://github.com/tuongroth/screenshot/blob/main/assets/553073624_649976174573743_1105425583170252892_n.png)
+  ![Popup Display](https://github.com/tuongroth/screenshot/blob/main/assets/553217333_782106247781651_5930813630517325974_n.png)
+
+* **Running:** `activate()` registers commands and providers.
+
+* **Deactivation:** `deactivate()` cleans up resources when the extension is disabled or VSCode closes.
+
+## Auto-Suggestion / IntelliSense
+
+* VSCode calls **CompletionItemProvider** when typing to get suggestions.  
+  **Demo:** Open `test.txt`, type `.` → suggestions `HelloWorld / Goodbye` appear  
+  ![Auto-Suggestion Example](https://github.com/tuongroth/screenshot/blob/main/assets/553590479_1071886631801148_3727056619677516986_n.png)
+
+
 
 **Assignment 2 – AI Webview**
 
