@@ -1,4 +1,4 @@
-**Assignment 1 –  VSCode Extension Life Cycle & Auto-Suggestion Demo**
+**ASSIGNMENT 1 –  VSCode Extension Life Cycle & Auto-Suggestion Demo**
 
 ## Key Points
 
@@ -46,7 +46,7 @@ When a user types, VS Code calls the provider → it returns a list of Completio
 
 
 
-**Assignment 2 – AI Webview**
+**ASSIGNMENT 2 – AI Webview**
 
 ## Screenshots
 
