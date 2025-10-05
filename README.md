@@ -84,7 +84,6 @@ code --extensionDevelopmentPath="C:\Users\HP\test\vscode-ai-webview"
 ### Save API key
 
 * Enter your OpenAI API key (`sk-xxxx...`) in the **API Key input**. example: https://huggingface.co/settings/tokens
-).
 * Click **Save API Key**.
 * You should see: `API key saved ✅`.
 
