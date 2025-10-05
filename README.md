@@ -23,7 +23,8 @@ This means the extension activates when the user runs the Hello World command.
   ![Hello World Command Trigger](https://github.com/tuongroth/screenshot/blob/main/assets/553073624_649976174573743_1105425583170252892_n.png)
   ![Popup Display](https://github.com/tuongroth/screenshot/blob/main/assets/553217333_782106247781651_5930813630517325974_n.png)
 
-* **Running:** `activate()` registers commands and providers.
+* **Running:** `Inside activate(), the extension registers commands and providers (e.g., completion, hover, formatting).
+Extensions run inside the Extension Host process, which is isolated from the VS Code UI for performance and stability.
 
 * **Deactivation:** `deactivate()` cleans up resources when the extension is disabled or VSCode closes.
 
@@ -36,6 +37,8 @@ When a user types, VS Code calls the provider → it returns a list of Completio
   **Demo:** Open `test.txt`, type `.` → suggestions `HelloWorld / Goodbye` appear  
   ![Auto-Suggestion Example](https://github.com/tuongroth/screenshot/blob/main/assets/553590479_1071886631801148_3727056619677516986_n.png)
 
+Real-world scenario (Rust, Python, C#):
+Complex extensions rely on a Language Server (e.g., rust-analyzer for Rust) via the Language Server Protocol (LSP).
 
 
 
