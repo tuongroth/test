@@ -8,7 +8,17 @@
 
 ## Life Cycle
 
-* **Activation:** Extension activates when a user action or event occurs (e.g., running a command).  
+* **Activation:** Activation: An extension only loads when one of its declared activationEvents fires.
+Example in package.json:
+
+"activationEvents": [
+  "onCommand:extension.helloWorld"
+]
+
+
+This means the extension activates when the user runs the Hello World command.
+
+
   **Demo:** Press `Ctrl+Shift+P → Hello World` → Popup appears  
   ![Hello World Command Trigger](https://github.com/tuongroth/screenshot/blob/main/assets/553073624_649976174573743_1105425583170252892_n.png)
   ![Popup Display](https://github.com/tuongroth/screenshot/blob/main/assets/553217333_782106247781651_5930813630517325974_n.png)
@@ -19,11 +29,15 @@
 
 ## Auto-Suggestion / IntelliSense
 
-* VSCode calls **CompletionItemProvider** when typing to get suggestions.  
+* VSCode calls **CompletionItemProvider**Basic Demo:
+Using languages.registerCompletionItemProvider, an extension can register suggestions.
+When a user types, VS Code calls the provider → it returns a list of CompletionItem[].
+
   **Demo:** Open `test.txt`, type `.` → suggestions `HelloWorld / Goodbye` appear  
   ![Auto-Suggestion Example](https://github.com/tuongroth/screenshot/blob/main/assets/553590479_1071886631801148_3727056619677516986_n.png)
 
-
+Real-world scenario (Rust, Python, C#):
+Complex extensions rely on a Language Server (e.g., rust-analyzer for Rust) via the Language
 ---
 
 **Assignment 2 – AI Webview**
