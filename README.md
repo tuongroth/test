@@ -27,12 +27,13 @@
 
 **Assignment 2 – AI Webview**
 
-This VS Code extension creates a Webview panel that allows:
+## Screenshots
 
-- **Left side:** an iframe to load a website from an input URL.
-- **Right side:** a chatbox to ask AI questions about the website content (OpenAI GPT API).
-- Users can enter an API key, saved securely in VS Code Secret Storage.
-- AI answers based on the content of the loaded webpage.
+**AI Webview – Loading a Website & Chatbox Layout**  
+![AI Webview Example 1](https://github.com/tuongroth/screenshot/blob/main/assets/553403895_697595876703086_1153140202464501344_n.png)
+
+**AI Webview – Asking AI about the Website**  
+![AI Webview Example 2](https://github.com/tuongroth/screenshot/blob/main/assets/553414570_1301683024502487_6089137219557561561_n.png)
 
 ---
 
@@ -88,7 +89,7 @@ code --extensionDevelopmentPath="C:\Users\HP\test\vscode-ai-webview"
 
 ### Save API key
 
-* Enter your OpenAI API key (`sk-xxxx...`) in the **API Key input**. example:(create one at https://platform.openai.com/account/api-keys
+* Enter your OpenAI API key (`sk-xxxx...`) in the **API Key input**. example:(create one at [https://platform.openai.com/account/api-keys](https://huggingface.co/settings/tokens)
 ).
 * Click **Save API Key**.
 * You should see: `API key saved ✅`.
@@ -116,12 +117,7 @@ code --extensionDevelopmentPath="C:\Users\HP\test\vscode-ai-webview"
 ---
 
 
-## 8️⃣ Notes
-
-* The Webview supports an **iframe + chat UI** layout.
-* If the Secret Storage does not contain a key, it falls back to `process.env.OPENAI_API_KEY`.
-* Use **GPT-3.5-turbo** for lower throttling.
-
+source: https://huggingface.co/docs/inference-providers/tasks/chat-completion
 ---
 
 ## 9️⃣ Optional diagram
