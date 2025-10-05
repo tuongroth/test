@@ -36,13 +36,12 @@ When a user types, VS Code calls the provider → it returns a list of Completio
   **Demo:** Open `test.txt`, type `.` → suggestions `HelloWorld / Goodbye` appear  
   ![Auto-Suggestion Example](https://github.com/tuongroth/screenshot/blob/main/assets/553590479_1071886631801148_3727056619677516986_n.png)
 
-Real-world scenario (Rust, Python, C#):
-Complex extensions rely on a Language Server (e.g., rust-analyzer for Rust) via the Language
----
 
 
 
 
+
+---------------------------------------------------------------------------------------------
 
 
 
