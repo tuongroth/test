@@ -25,7 +25,7 @@
 
 
 ---
----
+
 **Assignment 2 – AI Webview**
 
 ## Screenshots
