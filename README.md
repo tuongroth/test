@@ -40,6 +40,13 @@ Real-world scenario (Rust, Python, C#):
 Complex extensions rely on a Language Server (e.g., rust-analyzer for Rust) via the Language
 ---
 
+
+
+
+
+
+
+
 **Assignment 2 – AI Webview**
 
 ## Screenshots
