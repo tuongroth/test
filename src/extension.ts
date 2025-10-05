@@ -12,109 +12,160 @@ export function activate(context: vscode.ExtensionContext) {
 
     panel.webview.html = getWebviewContent();
 
-    panel.webview.onDidReceiveMessage(async (message) => {
+    // Forward an initial message if we have a saved key (so UI can show saved)
+    (async () => {
+      const saved = await context.secrets.get("ai_api_key");
+      if (saved) {
+        panel.webview.postMessage({ type: "apiKeySaved" });
+      }
+    })();
+
+    const messageHandler = panel.webview.onDidReceiveMessage(async (message) => {
       try {
+        if (!message || typeof message.type !== "string") {
+          return;
+        }
+
+        if (message.type === "saveApiKey") {
+          const apiKey = (message.apiKey || "").toString();
+          if (!apiKey) {
+            panel.webview.postMessage({ type: "error", message: "Empty API key received." });
+            return;
+          }
+          await context.secrets.store("ai_api_key", apiKey);
+          panel.webview.postMessage({ type: "apiKeySaved" });
+          return;
+        }
+
+        if (message.type === "loadUrl") {
+          // Optionally you could fetch the page or index it; we'll just acknowledge.
+          const url = (message.url || "").toString();
+          panel.webview.postMessage({ type: "pageContent", url });
+          return;
+        }
+
         if (message.type === "ask") {
           const question = (message.question || "").toString();
           const pageText = (message.pageText || "").toString();
 
-          // Lấy API key Hugging Face (secret storage > env var)
+          // Get API key from secret storage or env
           const apiKey =
             (await context.secrets.get("ai_api_key")) ||
             process.env.HUGGINGFACE_API_KEY ||
             process.env.HF_API_KEY;
 
-          if (apiKey) {
-            // build system + user messages
-            const systemMsg = {
-              role: "system",
-              content: "You are a helpful assistant. Answer concisely and use any page context if available."
-            };
+          // If no API key, return a mock/fallback answer so UI remains usable during dev
+          if (!apiKey) {
+            const mockAnswer = `Mock reply (no API key found). Your question was: "${question}"\nContext: ${pageText || "(none)"}`;
+            panel.webview.postMessage({ type: "answer", answer: mockAnswer });
+            return;
+          }
 
-            const userContent = pageText.startsWith("http")
-              ? `Context URL: ${pageText}\n\nQuestion: ${question}`
-              : `Page content:\n${pageText}\n\nQuestion: ${question}`;
+          // Build messages for HF chat router
+          const systemMsg = {
+            role: "system",
+            content: "You are a helpful assistant. Answer concisely and use any page context if available."
+          };
 
-            const userMsg = {
-              role: "user",
-              content: userContent
-            };
+          const userContent = pageText.startsWith("http")
+            ? `Context URL: ${pageText}\n\nQuestion: ${question}`
+            : `Page content:\n${pageText}\n\nQuestion: ${question}`;
 
-            const payload = {
-              model: "openai/gpt-oss-120b:fireworks-ai", // đổi model nếu cần
-              messages: [systemMsg, userMsg],
-              stream: false
-            };
+          const userMsg = {
+            role: "user",
+            content: userContent
+          };
 
-            try {
-  const resp = await axios.post(
-    "https://router.huggingface.co/v1/chat/completions",
-    payload,
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json; charset=utf-8",
-      },
-      timeout: 45000,
-    }
-  );
+          const payload = {
+            model: "openai/gpt-oss-120b:fireworks-ai", // change model ID if needed
+            messages: [systemMsg, userMsg],
+            stream: false
+          };
 
-  // Lấy câu trả lời; router trả choices[].message.content
-  const answer = resp?.data?.choices?.[0]?.message?.content
-    ?? resp?.data?.choices?.[0]?.message
-    ?? null;
+          try {
+            const resp = await axios.post(
+              "https://router.huggingface.co/v1/chat/completions",
+              payload,
+              {
+                headers: {
+                  Authorization: `Bearer ${apiKey}`,
+                  "Content-Type": "application/json; charset=utf-8",
+                },
+                timeout: 45000,
+              }
+            );
 
-  if (!answer) {
-    // Nếu không có field như kỳ vọng, gửi toàn bộ resp.data để debug
-    panel.webview.postMessage({
-      type: "error",
-      message: `Unexpected HF response shape: ${JSON.stringify(resp?.data ?? {}, null, 2)}`,
+            // router typically returns choices[].message.content
+            const answer =
+              resp?.data?.choices?.[0]?.message?.content ??
+              resp?.data?.choices?.[0]?.message ??
+              null;
+
+            if (!answer) {
+              panel.webview.postMessage({
+                type: "error",
+                message: `Unexpected HF response shape: ${JSON.stringify(resp?.data ?? {}, null, 2)}`,
+              });
+            } else {
+              panel.webview.postMessage({ type: "answer", answer: answer.toString() });
+            }
+          } catch (hfErr: any) {
+            const status = hfErr?.response?.status;
+            const data = hfErr?.response?.data;
+
+            if (status === 401 || status === 403) {
+              panel.webview.postMessage({
+                type: "error",
+                message:
+                  "Hugging Face authentication failed (401/403). Token invalid or lacks inference permission. Revoke/create a token at https://huggingface.co/settings/tokens and save it in the extension.",
+              });
+              return;
+            }
+
+            if (status === 404) {
+              panel.webview.postMessage({
+                type: "error",
+                message:
+                  "404 Not Found from Hugging Face router — model id may be invalid or not available for your account. Try a public model or verify the model id on huggingface.co.",
+              });
+              return;
+            }
+
+            if (status === 504) {
+              panel.webview.postMessage({
+                type: "error",
+                message:
+                  "504 Gateway Timeout from Hugging Face — the model or server timed out. Try again or use a smaller model / shorter input.",
+              });
+              return;
+            }
+
+            const errMsg = data ?? hfErr?.message ?? String(hfErr);
+            panel.webview.postMessage({
+              type: "error",
+              message: `Hugging Face call failed: ${JSON.stringify(errMsg)}`,
+            });
+          }
+
+          return;
+        }
+      } catch (err) {
+        panel.webview.postMessage({ type: "error", message: `Extension error: ${String(err)}` });
+      }
     });
-  } else {
-    panel.webview.postMessage({ type: "answer", answer: answer.toString() });
-  }
-} catch (hfErr: any) {
-  const status = hfErr?.response?.status;
-  const data = hfErr?.response?.data;
 
-  // Friendly messages for common statuses
-  if (status === 401 || status === 403) {
-    panel.webview.postMessage({
-      type: "error",
-      message:
-        "Hugging Face authentication failed (401/403). Token invalid or lacks inference permission. Revoke/create a token at https://huggingface.co/settings/tokens and save it in the extension.",
+    // Ensure we clean up the message listener when panel disposes
+    panel.onDidDispose(() => {
+      messageHandler.dispose();
     });
-    return;
-  }
-
-  if (status === 404) {
-    panel.webview.postMessage({
-      type: "error",
-      message:
-        "404 Not Found from Hugging Face router — model id may be invalid or not available for your account. Try a public model (e.g. 'google/flan-t5-small') or verify the model id on huggingface.co.",
-    });
-    return;
-  }
-
-  if (status === 504) {
-    panel.webview.postMessage({
-      type: "error",
-      message:
-        "504 Gateway Timeout from Hugging Face — the model or server timed out. Try again or use a smaller model / shorter input.",
-    });
-    return;
-  }
-
-  // Network / timeout / other errors
-  const errMsg = data ?? hfErr?.message ?? String(hfErr);
-  panel.webview.postMessage({
-    type: "error",
-    message: `Hugging Face call failed: ${JSON.stringify(errMsg)}`,
   });
+
+  context.subscriptions.push(disposable);
 }
 
-
-export function deactivate() {}
+export function deactivate() {
+  // nothing to clean up explicitly; disposables are registered in context.subscriptions
+}
 
 function getWebviewContent() {
   return `<!DOCTYPE html>

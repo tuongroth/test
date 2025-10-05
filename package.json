@@ -1,6 +1,7 @@
 {
   "name": "ai-webview-demo",
   "displayName": "AI Webview Demo",
+  "publisher": "tuongroth",  
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.104.0"
