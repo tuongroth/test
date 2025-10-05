@@ -24,7 +24,8 @@
   ![Auto-Suggestion Example](https://github.com/tuongroth/screenshot/blob/main/assets/553590479_1071886631801148_3727056619677516986_n.png)
 
 
-
+---
+---
 **Assignment 2 – AI Webview**
 
 ## Screenshots
