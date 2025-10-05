@@ -29,13 +29,6 @@
 
 ## Screenshots
 
-**AI Webview – Loading a Website & Chatbox Layout**  
-![AI Webview Example 1](https://github.com/tuongroth/screenshot/blob/main/assets/553403895_697595876703086_1153140202464501344_n.png)
-
-**AI Webview – Asking AI about the Website**  
-![AI Webview Example 2](https://github.com/tuongroth/screenshot/blob/main/assets/553414570_1301683024502487_6089137219557561561_n.png)
-
----
 
 ## 1️⃣ Clone the repository
 
@@ -115,10 +108,16 @@ code --extensionDevelopmentPath="C:\Users\HP\test\vscode-ai-webview"
 * "What information about OpenAI is present on this page?"
 
 ---
+**AI Webview – Loading a Website & Chatbox Layout**  
+![AI Webview Example 1](https://github.com/tuongroth/screenshot/blob/main/assets/553403895_697595876703086_1153140202464501344_n.png)
 
+**AI Webview – Asking AI about the Website**  
+![AI Webview Example 2](https://github.com/tuongroth/screenshot/blob/main/assets/553414570_1301683024502487_6089137219557561561_n.png)
 
-source: https://huggingface.co/docs/inference-providers/tasks/chat-completion
 ---
+
+
+
 
 ## 9️⃣ Optional diagram
 
@@ -133,4 +132,5 @@ source: https://huggingface.co/docs/inference-providers/tasks/chat-completion
 ```
 
 ---
-
+source: https://huggingface.co/docs/inference-providers/tasks/chat-completion
+---
